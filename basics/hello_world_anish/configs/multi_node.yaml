@@ -1,0 +1,47 @@
+PrefillService:
+  replicas: 8  # Run 8 prefill services (4 per node)
+  resources:
+    requests:
+      nvidia.com/gpu: 1  # Request 1 GPU per replica
+      nvidia.com/infiniband: 1  # Request InfiniBand
+    limits:
+      nvidia.com/gpu: 1
+      nvidia.com/infiniband: 1
+  nodeSelector:
+    nvidia.com/gpu.product: NVIDIA-A100-80GB  # Target A100 nodes
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+              - prefill-service
+          topologyKey: kubernetes.io/hostname
+
+DecodeService:
+  replicas: 8  # Run 8 decode services (4 per node)
+  resources:
+    requests:
+      nvidia.com/gpu: 1  # Request 1 GPU per replica
+      nvidia.com/infiniband: 1  # Request InfiniBand
+    limits:
+      nvidia.com/gpu: 1
+      nvidia.com/infiniband: 1
+  nodeSelector:
+    nvidia.com/gpu.product: NVIDIA-A100-80GB  # Target A100 nodes
+  affinity:
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+            - key: app
+              operator: In
+              values:
+              - decode-service
+          topologyKey: kubernetes.io/hostname
